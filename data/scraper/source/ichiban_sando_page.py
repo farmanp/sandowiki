@@ -2,7 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
 import time
 
 # Initialize the WebDriver
@@ -44,7 +43,7 @@ try:
 except Exception as e:
     print(f"Failed to navigate to Order Online: {e}")
 
-# Now scrape the products in the order online section
+# Capture the HTML source of the Order Online page
 try:
     # Wait until the order online products section is present
     order_products_section = WebDriverWait(driver, 10).until(
@@ -52,34 +51,18 @@ try:
     )
 
     # Get the page source once the products are loaded
-    html = driver.page_source
+    html_source = driver.page_source
 
-    # Parse the page content using BeautifulSoup
-    soup = BeautifulSoup(html, 'html.parser')
+    # Print the HTML source of the "Order Online" page
+    print(html_source)
 
-    # Find all product items (children of class 'grid__item')
-    product_items = soup.find_all('div', class_='item__card')
-
-    # Extract information for each product
-    for product in product_items:
-        breakpoint()
-        # Find the product name
-        name_div = product.find('p', class_='text-component w-product-title')
-        name = name_div.text.strip() if name_div else 'No name found'
-        
-        # Find the product description
-        description_div = product.find('div', class_='item__description')
-        description = description_div.text.strip() if description_div else 'No description found'
-
-        # Find the price from the <span> element
-        price_span = product.find('span', class_='text-component')
-        price = price_span.text.strip() if price_span else 'No price found'
-
-        # Print the product details
-        print(f"Product: {name}\nDescription: {description}\nPrice: {price}\n")
+    # Optionally, save the HTML source to a file for further inspection
+    with open("ichiban_sando_order_online_page_source.html", "w", encoding="utf-8") as file:
+        file.write(html_source)
+    print("HTML source of the 'Order Online' page saved to 'order_online_page_source.html'.")
 
 except Exception as e:
-    print(f"Failed to scrape products: {e}")
+    print(f"Failed to capture the 'Order Online' page source: {e}")
 
 # Close the WebDriver
 driver.quit()
